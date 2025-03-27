@@ -13,19 +13,20 @@ export class MoviesService {
     private readonly entityManager: EntityManager,
   ) {}
 
-  async create(createMovieDto: CreateMovieDto) {
-    const movie = new Movie(createMovieDto);
-    await this.entityManager.save(movie);
+  async findAll() {
+    return await this.moviesRepository.find();
   }
 
-  async findAll() {
-    return this.moviesRepository.find();
+  async create(createMovieDto: CreateMovieDto) {
+    const movie = new Movie(createMovieDto);
+    return await this.entityManager.save(movie);
   }
 
   async update(title: string, updateMovieDto: UpdateMovieDto) {
     const movie = await this.moviesRepository.findOneBy({ title: title });
+    if (!movie) return null;
     Object.assign(movie, updateMovieDto);
-    await this.entityManager.save(movie);
+    return await this.entityManager.save(movie);
   }
 
   async remove(title: string) {
