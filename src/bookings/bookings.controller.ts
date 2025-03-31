@@ -4,7 +4,6 @@ import {
   CreateBookingDto,
   CreateBookingResponseDto,
 } from './dto/create-booking.dto';
-import { Booking } from './entitites/booking.entity';
 
 @Controller('bookings')
 export class BookingsController {

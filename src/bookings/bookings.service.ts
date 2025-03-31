@@ -30,7 +30,7 @@ export class BookingsService {
         err instanceof QueryFailedError &&
         err.driverError instanceof DatabaseError
       ) {
-        if (err.driverError.code === '23505') {
+        if (err.driverError.code === PostgresErrorCode.UniqueViolation) {
           throw new BadRequestException('this seat is occupied');
         }
       }

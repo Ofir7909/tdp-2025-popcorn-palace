@@ -25,10 +25,10 @@ export class Showtime {
   @Column()
   theater: string;
 
-  @Column()
+  @Column({ type: 'timestamp with time zone' })
   startTime: Date;
 
-  @Column()
+  @Column({ type: 'timestamp with time zone' })
   endTime: Date;
 
   constructor(movie: Partial<Showtime>) {
