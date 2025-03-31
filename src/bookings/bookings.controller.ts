@@ -1,4 +1,10 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  ValidationPipe,
+} from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import {
   CreateBookingDto,
@@ -12,7 +18,7 @@ export class BookingsController {
   @Post()
   @HttpCode(200)
   async create(
-    @Body() createBookingDto: CreateBookingDto,
+    @Body(ValidationPipe) createBookingDto: CreateBookingDto,
   ): Promise<CreateBookingResponseDto> {
     const booking = await this.bookingsService.create(createBookingDto);
     return { bookingId: booking.id };

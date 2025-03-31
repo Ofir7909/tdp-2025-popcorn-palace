@@ -3,11 +3,11 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   HttpCode,
   NotFoundException,
+  ValidationPipe,
 } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
@@ -24,7 +24,7 @@ export class MoviesController {
 
   @Post()
   @HttpCode(200)
-  async create(@Body() createMovieDto: CreateMovieDto) {
+  async create(@Body(ValidationPipe) createMovieDto: CreateMovieDto) {
     return this.moviesService.create(createMovieDto);
   }
 
@@ -32,7 +32,7 @@ export class MoviesController {
   @HttpCode(200)
   async update(
     @Param('title') title: string,
-    @Body() updateMovieDto: UpdateMovieDto,
+    @Body(ValidationPipe) updateMovieDto: UpdateMovieDto,
   ) {
     const movie = await this.moviesService.update(title, updateMovieDto);
     if (!movie) {

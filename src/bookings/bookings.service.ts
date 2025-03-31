@@ -5,6 +5,7 @@ import { Showtime } from 'src/showtimes/entities/showtime.entity';
 import { EntityManager, QueryFailedError, Repository } from 'typeorm';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { DatabaseError } from 'pg-protocol';
+import { PostgresErrorCode } from 'src/database/postgresErrorCodes.enum';
 
 @Injectable()
 export class BookingsService {

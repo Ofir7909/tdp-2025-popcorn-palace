@@ -3,7 +3,7 @@ import { CreateShowtimeDto } from './dto/create-showtime.dto';
 import { UpdateShowtimeDto } from './dto/update-showtime.dto';
 import { Showtime } from './entities/showtime.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, LessThan, MoreThan, Repository } from 'typeorm';
+import { EntityManager, LessThan, MoreThan, Not, Repository } from 'typeorm';
 import { Movie } from 'src/movies/entities/movie.entity';
 
 @Injectable()
@@ -24,11 +24,13 @@ export class ShowtimesService {
     theather: string,
     startTime: Date,
     endTime: Date,
+    excludeId: number = -1,
   ): Promise<boolean> {
     const occupied = await this.showtimesRepository.existsBy({
       theater: theather,
       startTime: LessThan(endTime),
       endTime: MoreThan(startTime),
+      id: Not(excludeId),
     });
     return occupied;
   }
@@ -39,6 +41,9 @@ export class ShowtimesService {
     });
     if (!movie) {
       throw new BadRequestException('movie does not exist');
+    }
+    if (createShowtimeDto.startTime > createShowtimeDto.endTime) {
+      throw new BadRequestException('startTime must be before endTime');
     }
     if (
       await this.isTheatherOccupied(
@@ -71,13 +76,17 @@ export class ShowtimesService {
       }
     }
     if (updateShowtimeDto.startTime || updateShowtimeDto.endTime) {
-      if (
-        await this.isTheatherOccupied(
-          updateShowtimeDto.theater,
-          updateShowtimeDto.startTime,
-          updateShowtimeDto.endTime,
-        )
-      ) {
+      const theater = updateShowtimeDto.theater || showtime.theater;
+      const startTime = new Date(
+        updateShowtimeDto.startTime || showtime.startTime,
+      );
+      const endTime = new Date(updateShowtimeDto.endTime || showtime.endTime);
+
+      if (startTime > endTime) {
+        throw new BadRequestException('startTime must be before endTime');
+      }
+
+      if (await this.isTheatherOccupied(theater, startTime, endTime, id)) {
         throw new BadRequestException(
           'theater is occupied during the requested time',
         );

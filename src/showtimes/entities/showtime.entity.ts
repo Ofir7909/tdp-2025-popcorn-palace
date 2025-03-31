@@ -1,12 +1,6 @@
 import { DecimalColumnTransformer } from 'src/common/transformers';
 import { Movie } from 'src/movies/entities/movie.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Showtime {
