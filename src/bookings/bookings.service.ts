@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Booking } from './entitites/booking.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Showtime } from 'src/showtimes/entities/showtime.entity';
-import { EntityManager, QueryFailedError, Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { DatabaseError } from 'pg-protocol';
 import { PostgresErrorCode } from 'src/database/postgresErrorCodes.enum';
@@ -12,7 +12,8 @@ export class BookingsService {
   constructor(
     @InjectRepository(Showtime)
     private readonly showtimesRepository: Repository<Showtime>,
-    private readonly entityManager: EntityManager,
+    @InjectRepository(Booking)
+    private readonly bookingsRepository: Repository<Booking>,
   ) {}
 
   async create(createBookingDto: CreateBookingDto): Promise<Booking> {
@@ -25,7 +26,7 @@ export class BookingsService {
     let booking = new Booking(createBookingDto);
 
     try {
-      return await this.entityManager.save(booking);
+      return await this.bookingsRepository.save(booking);
     } catch (err) {
       if (
         err instanceof QueryFailedError &&

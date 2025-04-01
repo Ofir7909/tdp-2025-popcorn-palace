@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
-import { EntityManager, QueryFailedError, Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { Movie } from './entities/movie.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DatabaseError } from 'pg-protocol';
@@ -12,7 +12,6 @@ export class MoviesService {
   constructor(
     @InjectRepository(Movie)
     private readonly moviesRepository: Repository<Movie>,
-    private readonly entityManager: EntityManager,
   ) {}
 
   async findAll() {
@@ -22,7 +21,7 @@ export class MoviesService {
   async create(createMovieDto: CreateMovieDto) {
     const movie = new Movie(createMovieDto);
     try {
-      return await this.entityManager.save(movie);
+      return await this.moviesRepository.save(movie);
     } catch (err) {
       if (
         err instanceof QueryFailedError &&
@@ -43,7 +42,7 @@ export class MoviesService {
     if (!movie) return null;
     Object.assign(movie, updateMovieDto);
     try {
-      return await this.entityManager.save(movie);
+      return await this.moviesRepository.save(movie);
     } catch (err) {
       if (
         err instanceof QueryFailedError &&

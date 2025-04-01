@@ -3,7 +3,7 @@ import { CreateShowtimeDto } from './dto/create-showtime.dto';
 import { UpdateShowtimeDto } from './dto/update-showtime.dto';
 import { Showtime } from './entities/showtime.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, LessThan, MoreThan, Not, Repository } from 'typeorm';
+import { LessThan, MoreThan, Not, Repository } from 'typeorm';
 import { Movie } from 'src/movies/entities/movie.entity';
 
 @Injectable()
@@ -13,7 +13,6 @@ export class ShowtimesService {
     private readonly showtimesRepository: Repository<Showtime>,
     @InjectRepository(Movie)
     private readonly moviesRepository: Repository<Movie>,
-    private readonly entityManager: EntityManager,
   ) {}
 
   async findOne(id: number): Promise<Showtime> {
@@ -57,7 +56,7 @@ export class ShowtimesService {
       );
     }
     let showtime = new Showtime(createShowtimeDto);
-    return this.entityManager.save(showtime);
+    return this.showtimesRepository.save(showtime);
   }
 
   async update(
@@ -93,7 +92,7 @@ export class ShowtimesService {
       }
     }
     Object.assign(showtime, updateShowtimeDto);
-    return this.entityManager.save(showtime);
+    return this.showtimesRepository.save(showtime);
   }
 
   async remove(id: number): Promise<void> {
